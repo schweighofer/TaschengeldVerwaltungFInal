@@ -88,7 +88,11 @@ public class Database {
     }
 
     public Statement getStatement() throws SQLException {
-        return cachedConnection.getStatement();
+        Statement statement = cachedConnection.getStatement();
+        while (statement == null) {
+            statement = cachedConnection.getStatement();
+        }
+        return statement;
     }
 
     public static void main(String[] args) {
