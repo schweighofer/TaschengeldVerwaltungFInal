@@ -255,15 +255,18 @@ public class Access {
     public void insertFastBooking(Long personId, Booking booking) throws SQLException {
         LocalDateTime dateOfBooking = booking.getDateTime();
 
-        String sqlString = String.format("INSERT INTO public.\"booking\"(\n" +
-                "    \"villager_id\", \"date_of_booking\", \"purpose_id\", \"amount\", \"receipt_nr\", \"note\", \"user_id\")\n" +
-                "VALUES (%d, '%s', %d, %f, %d, '%s', %s);", personId, dateOfBooking.format(DTF),
+        String sqlString = String.format("INSERT INTO public.\"booking\"(\"villager_id\", \"date_of_booking\", \"purpose_id\", \"amount\", \"receipt_nr\", \"note\", \"user_id\") VALUES (%d, '%s', %d, %s, %d, '%s', %s);",
+                personId,
+                dateOfBooking.format(DTF),
                 booking.getPurpose().getId(),
-                booking.getValue(),
+                booking.getValue() + "",
                 booking.getReceiptNumber(),
                 booking.getNote(),
                 getIdOfUser(booking.getUsername())
                 );
+
+        System.out.println(sqlString);
+
         Statement statement = dbInstance.getStatement();
         statement.execute(sqlString);
 

@@ -78,9 +78,11 @@ public class VillagerResource {
     @Path("/postFastBooking")
     public Response postFastBooking(@QueryParam("personId") Long personId, Booking booking) {
         try {
+            System.out.println(booking);
             access.insertFastBooking(personId,booking);
             return Response.accepted().build();
         } catch (SQLException e) {
+            e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }

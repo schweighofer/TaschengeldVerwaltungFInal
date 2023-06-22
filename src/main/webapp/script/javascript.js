@@ -389,6 +389,7 @@ function saveTrunkData() {
 
 function loadVillagerHistory() {
     const villagerId = window.location.search.substring(window.location.search.indexOf("=") + 1);
+    document.getElementById('vId-speicher').setAttribute('name', villagerId);
     fetch(BASE_URL + '/getVillagerBookingHistory?personId='+villagerId)
         .then(res => {
             if (!res.ok) {
@@ -406,16 +407,92 @@ function loadVillagerHistory() {
 
 function displayVillagerHistory(bookings) {
     console.log(bookings)
-    let html = `<tr><th></th><th>BuchungsNR</th><th>Zweck</th><th>Anmerkung</th><th>Betrag</th><th>Kontostand</th></tr><tr><td><button onclick='fastBooking()'>Schnellbuchung:</button></td><td><input class='input' id='kuerzel'></td><td><input class='input' id='buchungsNR'></td><td><input class='input' id='zweck'></td><td><input class='input' id='anmerkung'></td><td><input class='input' id='betrag'></td><td></td></tr>`;
+    let html = `<tr><th></th><th>BuchungsNR</th><th>Datum</th><th>Zweck</th><th>Anmerkung</th><th>Betrag</th><th>Kontostand</th></tr><tr><td><button onclick='villagerFastBooking()'>Schnellbuchung:</button></td><td><input class='input' id='buchungsNR'></td><td><input class='input' id='datum'></td><td>
+                <div class='column is-10'>
+                    <div class="dropdown-anrede">
+                        <button class="dropbtn" id="id-zweck-button" onclick="loadPurpose();">Zweck</button>
+                        <div class="dropdown-content-anrede" id='dropdown-content-zweck'>
+                            <!--more options here-->
+                        </div>
+                    </div>
+                </div>
+                </td><td><input class='input' id='anmerkung'></td><td><input class='input' id='betrag'></td><td></td></tr>`;
     for (booking in bookings) {
-        html += `<tr><td></td><td>${bookings[booking].receiptNumber}</td><td>${bookings[booking].purpose.text}</td><td>${bookings[booking].note}</td><td>${bookings[booking].value}</td><td>KONTOSTAND</td></tr>`;
+        html += `<tr><td></td><td>${bookings[booking].receiptNumber}</td><td>${bookings[booking].dateTime}</td><td>${bookings[booking].purpose.text}</td><td>${bookings[booking].note}</td><td>${bookings[booking].value}</td><td>KONTOSTAND</td></tr>`;
     }
     document.getElementById('buchTabelle').innerHTML = html;
 
 }
 // TODO: nicht zusammenlegen mit fastBooking()
-function villagerFastBooking() {
 
+function loadPurpose() {
+    fetch(BASE_URL + '/getAllPurposes')
+        .then(res => {
+            if (!res.ok) {
+                throw Error("HTTP-error: " + res.status);
+            }
+            return res.json();
+        })
+        .then(purposes => {
+            displayPurposes(purposes);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+function displayPurposes(purposes) {
+    let html4 = '';
+    for (let purpose in purposes) {
+        html4 += `<a onclick='updateTheCurrentPurpose("${purposes[purpose].text}", ${purposes[purpose].id})'>${purposes[purpose].text}</a><br>`;
+    }
+    document.getElementById('dropdown-content-zweck').innerHTML = html4;
+}
+
+function updateTheCurrentPurpose(newCurrent, id) {
+    document.getElementById('id-zweck-button').innerText = newCurrent;
+    document.getElementById('id-zweck-button').setAttribute('name', id);
+
+    document.getElementById('dropdown-content-zweck').innerHTML = '';
+
+}
+
+function villagerFastBooking() {
+    let booking = JSON.stringify({
+        villagerId: document.getElementById('vId-speicher').getAttribute('name'),
+        dateTime: new Date().toISOString().replace("Z", ""),
+        username: 'admin',
+        value: document.getElementById('betrag').value,
+        receiptNumber: document.getElementById('buchungsNR').value,
+        note: document.getElementById('anmerkung').value,
+        purpose: {
+            id: document.getElementById('id-zweck-button').getAttribute('name'),
+            text: document.getElementById('id-zweck-button').innerText,
+            multiplier: 1,
+            isActive: true
+        }
+    });
+
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let requestOptions3 = {
+        method: 'POST',
+        headers: myHeaders,
+        body: booking,
+        redirect: 'follow'
+    };
+
+    fetch(BASE_URL + '/postFastBooking?personId=' + document.getElementById('vId-speicher').getAttribute('name'), requestOptions3)
+        .then(res => {
+            if (!res.ok) {
+                throw Error("HTTP-error: " + res.status);
+            }
+            loadVillagerHistory();
+        })
+        .catch(err => {
+            console.log(err);
+        });
 }
 
 
