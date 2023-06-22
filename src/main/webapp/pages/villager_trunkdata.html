@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width-device-width, initial-scale-1'>
+    <title>Stammdaten</title>
+    <link rel='stylesheet' href='../css/bulma.css'>
+    <link rel='stylesheet' href='../css/general.css'>
+    <script src='../script/javascript.js'></script>
+    <style>
+        .dropdown {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .dropdown-content {
+            background-color: white;
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            background-color: white;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-anrede {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content-anrede {
+            display: none;
+            position: absolute;
+            z-index: 1;
+        }
+
+        .dropdown-content-anrede a {
+            background-color: white;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-anrede:hover .dropdown-content-anrede {
+            display: block;
+        }
+    </style>
+</head>
+<body onload='changeLinkSoIsCorrect(); loadAllSalutations(); loadAllRelations(); loadTrunkDataVillager(true); loadTrunkDataTrusted(); loadAllTransitionMethods();'>
+    <!-- Header der Seite -->
+    <section class='hero'>
+        <div class='columns is-variable is-3 is-centered generalHeader'>
+            <div id='ubersichtHeader' class='column is-2 unselected-header' onclick=''>
+                <a href='./overview.html'>
+                    Übersicht
+                </a>
+            </div>
+            <div id='buchHeader' class='column is-2 unselected-header'>
+                <a href='./history.html'>
+                    Buchungen
+                </a>
+            </div>
+        </div>
+    </section>
+    <div style='position: absolute; top:3px; left:3px;'>
+        <img src='../resources/logo.png'>
+    </div>
+    <!-- User Drop-Down -->
+    <div class="dropdown">
+        <button class="dropbtn">Benutzerverwaltung</button>
+        <div class="dropdown-content">
+            <a href="./admin.html">Admin-Bereich</a>
+            <a href="./login.html">Abmelden</a>
+        </div>
+    </div>
+
+    <!-- Content der Seite -->
+    <br /><br />
+    <!-- Stammdaten Header -->
+    <section class='hero'>
+        <div class='columns is-centered'>
+            <div class='column is-6 columns is-centered indiHeader'>
+                <div id='indiHeaderName' class='column is-3'>
+                    <strong style='align-self: center; font-size: large; color:white;' id="strong-name-b"> Max Mustermann: </strong>
+                </div>
+                <div id='indiStammHeader' class='column is-4 unselected-header'>
+                    <a id='v-stamm-leitung' href='./villager_trunkdata.html' style='color: white'>Stammdaten</a>
+                </div>
+                <div id='indiBuchHeader' class='column is-4 unselected-header' onclick='buchen()'>
+                    <a id="v-history-leitung" href='./villager_history.html'>Buchungen</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Daten-Eingaben -->
+    <br /><br />
+    <section>
+        <div class='title' id='div-alle-daten'>Bewohner Daten:</div>
+        <div class='columns is-centered' id='daten-trust-person'>
+            <div class='column is-10 columns is-multiline' style='border-style: solid; border-radius: 2px;'>
+                <div class='column is-2'>Vorname:</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-firstname'>
+                </div>
+                <div class='column is-2'>Nachname:</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-lastname'>
+                </div>
+                <div class='column is-2'>Kürzel:</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-shortsign'>
+                </div>
+                <div class='column is-2'>Titel (vor):</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-titlepre'>
+                </div>
+                <div class='column is-2'>Titel (nach):</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-titlesuf'>
+                </div>
+                <div class='column is-2'>Anrede:</div>
+                <div class='column is-10'>
+                    <div class="dropdown-anrede">
+                        <button class="dropbtn" id="B-anrede-button">Anrede</button>
+                        <div class="dropdown-content-anrede" id='B-dropdown-anrede'>
+                            <a onclick="b_selectSalutation('Herr')">Herr</a>
+                            <a onclick="b_selectSalutation('Frau')">Frau</a>
+                            <!-- more options here-->
+                        </div>
+                    </div>
+                </div>
+                <div class='column is-2'>Geburtsdatum:</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-dateofbirth'>
+                </div>
+
+                <div class='column is-2'>Austrittsdatum:</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-dateofexit'>
+                </div>
+                <div class='column is-2'>Notiz:</div>
+                <div class='column is-10'>
+                    <input class='input' id='B-note'>
+                </div>
+            </div>
+            <div class='column is-1'></div>
+        </div>
+        <div class='title'>Vertrauensperson Daten:</div>
+        <div class='columns is-centered'>
+            <div class='column is-10 columns is-multiline' style='border-style: solid; border-radius: 2px;'>
+                <div class='column is-2'>Vorname:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-firstname'>
+                </div>
+                <div class='column is-2'>Nachname:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-lastname'>
+                </div>
+                <div class='column is-2'>Titel (vor):</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-titlepre'>
+                </div>
+                <div class='column is-2'>Titel (nach):</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-titlesuf'>
+                </div>
+                <div class='column is-2'>Anrede:</div>
+                <div class='column is-10'>
+                    <div class="dropdown-anrede">
+                        <button class="dropbtn" id="V-anrede-button">Anrede</button>
+                        <div class="dropdown-content-anrede" id='V-dropdown-anrede'>
+                            <a href="#" onclick="v_selectSalutation('Herr')">Herr</a>
+                            <a href="#" onclick="v_selectSalutation('Frau')">Frau</a>
+                            <!--more options here-->
+                        </div>
+                    </div>
+                </div>
+                <div class='column is-2'>Beziehung:</div>
+                <div class='column is-10'>
+                    <div class="dropdown-anrede">
+                        <button class="dropbtn" id="V-relation-button">Beziehung</button>
+                        <div class="dropdown-content-anrede" id='V-dropdown-relation'>
+                            <a href="#" onclick="v_selectRelation('Sohn')">Sohn</a>
+                            <a href="#" onclick="v_selectRelation('Tochter')">Tochter</a>
+                            <!--more options here-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class='column is-2'>Kontakmethode:</div>
+                <div class='column is-10'>
+                    <div class="dropdown-anrede">
+                        <button class="dropbtn" id="V-method-button">Methode</button>
+                        <div class="dropdown-content-anrede" id='V-dropdown-method'>
+                            <!--more options here-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class='column is-12'>
+                    <strong><center>Kontaktiformationen</center></strong>
+                </div>
+                <div class='column is-2'>E-Mail:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-email'>
+                </div>
+                <div class='column is-2'>Telefonnummer:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-telephone'>
+                </div>
+                <div class='column is-2'>Stadt:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-town'>
+                </div>
+                <div class='column is-2'>PLZ:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-zipcode'>
+                </div>
+                <div class='column is-2'>Straße:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-street'>
+                </div>
+                <div class='column is-2'>Hausnummer:</div>
+                <div class='column is-10'>
+                    <input class='input' id='V-housenr'>
+                </div>
+            </div>
+            <div class='column is-1'></div>
+        </div>
+        <div class='columns'>
+            <div class='column is-1'></div>
+            <div class='column is-3 button has-background-grey-lighter' onclick='saveTrunkData();'>speichern</div>
+        </div>
+    </section>
+    <!-- Export Drop-Up -->
+    <div class='button generalButton' style='position: fixed; bottom:20px; right:10px; width:150px; height:40px;'>Depotauskunft</div>
+    </br>
+    </br>
+    </br>
+</body>
+</html>
